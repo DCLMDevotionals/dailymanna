@@ -459,9 +459,11 @@ class Stepper {
     const dependents = new Map();
     for (const [dependentIdx, { dependencies: ownDependencies }] of metadata) {
       for (const dependencyIdx of ownDependencies) {
-        dependents
-          .getOrInsertComputed(dependencyIdx, () => new Set())
-          .add(dependentIdx);
+        let ownDependents = dependents.get(dependencyIdx);
+        if (!ownDependents) {
+          dependents.set(dependencyIdx, (ownDependents = new Set()));
+        }
+        ownDependents.add(dependentIdx);
       }
     }
 

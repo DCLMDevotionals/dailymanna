@@ -598,8 +598,6 @@ pdfjs-editor-edit-comment-popup-button =
 pdfjs-editor-delete-comment-popup-button-label = Kkes awennit
 pdfjs-editor-delete-comment-popup-button =
     .title = Kkes awennit
-pdfjs-show-comment-button =
-    .title = Sken awennit
 
 ##  Edit a comment dialog
 
