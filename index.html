@@ -232,37 +232,76 @@ h1{
     font-size:.95rem;
 }
 
-/* Mobile Responsiveness */
-@media(max-width:600px){
-    .container{
-        padding:35px 20px;
+/* Optimized Mobile Responsiveness */
+@media (max-width: 600px) {
+    body {
+        padding: 12px 10px; /* Reduces outer margin so card uses maximum screen width */
+        /*align-items: flex-start; /* Prevents awkward top/bottom centering issues on tall screens */
     }
 
-    h1{
-        font-size:2rem;
+    .container {
+        padding: 24px 18px; /* Tighter padding for mobile screens */
+        border-radius: 18px;
     }
 
-    .welcome{
-        font-size:1.15rem;
+    h1 {
+        font-size: 1.75rem; /* Better scale for mobile headers */
+        margin-bottom: 12px;
     }
 
-    .intro{
-        font-size:1rem;
+    .welcome {
+        font-size: 1.05rem;
+        margin-bottom: 10px;
     }
 
-    .btn{
-        font-size:1.2rem;
-        padding:16px;
+    .intro {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 24px;
+    }
+
+    .buttons {
+        gap: 12px; /* Tighter button spacing */
+        margin-bottom: 24px;
+    }
+
+    .btn {
+        font-size: 1.05rem; /* Clean, legible tap targets */
+        padding: 14px 16px;
+        border-radius: 12px;
+    }
+
+    /* Keep social buttons side-by-side on mobile instead of giant stacked bars */
+    .social-divider {
+        margin-top: 30px;
+        margin-bottom: 16px;
+        font-size: 0.85rem;
     }
 
     .social-buttons {
-        flex-direction: column;
+        display: flex;
+        flex-direction: row; /* Horizontal layout */
+        gap: 8px;
     }
 
     .social-buttons .btn {
-        flex: 1 1 100%;
+        flex: 1; /* Split row equally into 3 compact buttons */
+        font-size: 0.85rem;
+        padding: 10px 6px;
+        gap: 6px;
+    }
+
+    .social-buttons .btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Reduce heavy blur for smoother mobile animation rendering */
+    body::before {
+        filter: blur(15px);
     }
 }
+
 </style>
 </head>
 <body>
