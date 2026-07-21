@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>DCLM Devotional</title>
 
-<script
-    defer src="https://cloud.umami.is/script.js" data-website-id="2b4cb0ed-62d5-411a-9125-663081e8a936">
-</script>
+<!-- SEO & Social Sharing Meta Tags -->
+<meta name="description" content="Access Deeper Christian Life Ministry devotional guides for adults, youth, and children daily.">
+<meta property="og:title" content="DCLM Devotionals">
+<meta property="og:description" content="Daily Manna, Higher Everyday, and Sincere Milk devotional guides.">
+<meta property="og:type" content="website">
+
+<script defer src="https://cloud.umami.is/script.js" data-website-id="2b4cb0ed-62d5-411a-9125-663081e8a936"></script>
 
 <style>
 *{
@@ -24,7 +27,7 @@ body{
     justify-content:center;
     align-items:center;
     padding:20px;
-    overflow:hidden;
+    overflow-x:hidden;
     position:relative;
     background:#050816;
 }
@@ -72,15 +75,11 @@ body::after{
 }
 
 @keyframes pulse{
-    0%,100%{
-        opacity:.35;
-    }
-    50%{
-        opacity:.75;
-    }
+    0%,100%{ opacity:.35; }
+    50%{ opacity:.75; }
 }
 
-/* Card */
+/* Card Container */
 .container{
     width:100%;
     max-width:700px;
@@ -100,12 +99,13 @@ h1{
     color:#fff;
     font-size:3rem;
     margin-bottom:18px; 
+    letter-spacing: 1px;
 }
 
 .welcome{
     color:#c8c8c8;
     font-size:1.5rem;
-    margin-bottom:14px;
+    margin-bottom:6px;
     font-weight: bold;
 }
 
@@ -113,19 +113,20 @@ h1{
     color: #c8c8c8;
     line-height:1.8;
     margin-bottom:35px;
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 500;
 }
 
-/* Buttons */
+/* Primary Buttons */
 .buttons{
     display:flex;
     flex-direction:column;
     gap:18px;
+    margin-bottom: 35px;
 }
 
 .btn{
-    display:flex;
+    display:inline-flex;
     justify-content:center;
     align-items:center;
     gap:12px;
@@ -133,15 +134,28 @@ h1{
     color:#fff;
     padding:18px;
     border-radius:14px;
-    font-size:1.5rem;
+    font-size:1.3rem;
     font-weight:600;
     transition:.35s;
     border:1px solid rgba(255,255,255,.08);
 }
 
+/* SVG Icon Styling */
+.btn svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
 .btn:hover{
     transform:translateY(-4px) scale(1.02);
     filter:brightness(1.08);
+}
+
+.btn:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 3px;
 }
 
 .manna{
@@ -159,15 +173,61 @@ h1{
     box-shadow:0 6px 0px rgba(253,126,20,.35);
 }
 
+/* Social Section Divider */
+.social-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.social-divider::before,
+.social-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.social-divider:not(:empty)::before { margin-right: .8em; }
+.social-divider:not(:empty)::after { margin-left: .8em; }
+
+/* Social Buttons */
+.social-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.social-buttons .btn {
+    flex: 1;
+    font-size: 1.1rem;
+    padding: 14px;
+}
+
+.whatsapp {
+    background: linear-gradient(135deg, #128c7e, #075e54);
+    box-shadow: 0 6px 0px rgba(37, 211, 102, 0.25);
+}
+
+.facebook {
+    background: linear-gradient(135deg, #1877f2, #0b56ba);
+    box-shadow: 0 6px 0px rgba(24, 119, 242, 0.25);
+}
+
 .footer{
     margin-top:35px;
     color:#94a3b8;
     font-size:.95rem;
 }
 
-/* Mobile */
+/* Mobile Responsiveness */
 @media(max-width:600px){
-
     .container{
         padding:35px 20px;
     }
@@ -177,20 +237,23 @@ h1{
     }
 
     .welcome{
-        font-size:1.05rem;
+        font-size:1.15rem;
     }
 
     .intro{
-        font-size:.96rem;
+        font-size:1rem;
     }
 
     .btn{
-        font-size:1rem;
+        font-size:1.2rem;
         padding:16px;
+    }
+
+    .social-buttons {
+        flex-direction: column;
     }
 }
 </style>
-
 </head>
 <body>
 
@@ -199,34 +262,62 @@ h1{
     <h1>DCLM DEVOTIONALS</h1>
 
     <p class="welcome">
-        Welcome to DCLM Devotionals page🙏
+        Welcome to DCLM Devotionals page 🙏
     </p>
 
     <p class="intro">
-        Access the Deeper Christian Life Ministry devotional guides for adults, youth and children below:
+        Access the Deeper Christian Life Ministry devotional guides for adults, youth, and children below:
     </p>
 
     <div class="buttons">
-
         <a class="btn manna"
            href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/DailyManna.pdf"
            target="_blank"
            rel="noopener noreferrer">
-            📖 Daily Manna
+            <span>📖</span> Daily Manna
         </a>
         
         <a class="btn higher"
            href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/HigherEveryday.pdf"
            target="_blank"
            rel="noopener noreferrer">
-            🌅 Higher Everyday
+            <span>🌅</span> Higher Everyday
         </a>
         
         <a class="btn milk"
            href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/SincereMilk.pdf"
            target="_blank"
            rel="noopener noreferrer">
-            🍼 Sincere Milk
+            <span>🍼</span> Sincere Milk
+        </a>
+    </div>
+
+    <!-- Social Section -->
+    <div class="social-divider">Connect With Us</div>
+    
+    <div class="social-buttons">
+        <a class="btn whatsapp"
+           href="https://whatsapp.com/channel/0029VbDERHM0LKZ79eZbN20J"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="WhatsApp Channel">
+            <!-- WhatsApp Vector Icon -->
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12.011 1.003c-6.062 0-10.976 4.914-10.976 10.976 0 1.937.503 3.826 1.46 5.485l-1.55 5.666 5.801-1.522c1.605.877 3.415 1.347 5.265 1.347 6.063 0 10.976-4.914 10.976-10.976 0-6.062-4.913-10.976-10.976-10.976zm0 20.082c-1.687 0-3.342-.453-4.79-1.312l-.343-.204-3.559.933.949-3.468-.224-.356c-.943-1.503-1.442-3.238-1.442-5.018 0-5.021 4.085-9.106 9.106-9.106 5.022 0 9.107 4.085 9.107 9.106 0 5.022-4.085 9.107-9.104 9.107zm5.002-6.837c-.274-.137-1.623-.801-1.874-.892-.252-.093-.435-.137-.618.137-.183.273-.709.892-.869 1.074-.16.183-.32.205-.594.069-.274-.137-1.159-.427-2.208-1.362-.816-.728-1.368-1.627-1.528-1.901-.16-.274-.017-.422.12-.558.123-.123.274-.32.411-.479.137-.16.183-.274.274-.457.091-.183.046-.343-.023-.479-.069-.137-.618-1.484-.847-2.032-.223-.533-.45-.461-.618-.47-.16-.008-.343-.01-.525-.01-.183 0-.479.069-.731.343-.252.274-.96.938-.96 2.289 0 1.351.983 2.653 1.12 2.836.137.183 1.936 2.956 4.69 4.145.655.283 1.167.452 1.566.579.658.209 1.257.179 1.73.109.527-.079 1.623-.663 1.852-1.301.228-.639.228-1.187.16-1.301-.068-.114-.251-.183-.525-.32z"/>
+            </svg>
+            WhatsApp Channel
+        </a>
+
+        <a class="btn facebook"
+           href="https://www.facebook.com/profile.php?id=61591868022804" 
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Facebook Channel">
+            <!-- Facebook Vector Icon -->
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            Facebook Channel
         </a>
     </div>
 
