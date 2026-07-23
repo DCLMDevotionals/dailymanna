@@ -36,49 +36,66 @@ body{
 
 /* HIGH-PERFORMANCE INDEPENDENT GPU BACKGROUND */
 .bg-layer {
-    position: fixed;
-    inset: -20%;
-    z-index: -2;
-    pointer-events: none;
-    will-change: transform;
-    transform: translateZ(0);
-    background:
-        radial-gradient(circle at 20% 20%, rgba(13,110,253,.35), transparent 35%),
-        radial-gradient(circle at 80% 25%, rgba(32,201,151,.30), transparent 35%),
-        radial-gradient(circle at 75% 85%, rgba(111,66,193,.35), transparent 35%),
-        radial-gradient(circle at 20% 80%, rgba(25,135,84,.30), transparent 35%),
-        linear-gradient(135deg,#030712,#0b1224,#111827,#030712);
-    animation: smoothBgMove 22s ease-in-out infinite alternate;
+  position: fixed;
+  /* Expand the dimensions directly instead of using scale(2) */
+  top: -50%;
+  left: -50%;
+  width: 200vw;
+  height: 200vh;
+  z-index: -20;
+  pointer-events: none;
+
+  /* Force clean GPU compositing layer without main-thread rasterization */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+
+  background:
+    radial-gradient(circle at 20% 20%, rgba(13,110,253,.35), transparent 35%),
+    radial-gradient(circle at 80% 25%, rgba(32,201,151,.30), transparent 35%),
+    radial-gradient(circle at 75% 85%, rgba(111,66,193,.35), transparent 35%),
+    radial-gradient(circle at 20% 80%, rgba(25,135,84,.30), transparent 35%),
+    linear-gradient(135deg,#030712,#0b1224,#111827,#030712);
+
+  animation: smoothBgMove 22s ease-in-out infinite alternate;
 }
 
 @keyframes smoothBgMove {
-    0% { transform: translate3d(0, 0, 0) scale(1); }
-    50% { transform: translate3d(-3%, 2%, 0) scale(1.05); }
-    100% { transform: translate3d(2%, -3%, 0) scale(1.02); }
+  /* Percentage translation reduced to match the native 200vw/vh size */
+  0%   { transform: translate3d(-12.5%, 10%, 0) rotate(-4deg); }
+  100% { transform: translate3d(12.5%, -10%, 0) rotate(4deg); }
 }
 
 .bg-pulse {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    will-change: opacity;
-    background: radial-gradient(circle, rgba(255,255,255,.05), transparent 65%);
-    animation: pulseOpacity 8s ease-in-out infinite alternate;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  
+  /* Cheap, static background */
+  background: radial-gradient(circle, rgba(255,255,255,.05), transparent 65%);
+  
+  /* Slowed down slightly for less frequent repaint calculations */
+  animation: pulseOpacity 12s ease-in-out infinite alternate;
 }
 
 @keyframes pulseOpacity {
-    0% { opacity: .25; }
-    100% { opacity: .65; }
+  0%   { opacity: .25; }
+  100% { opacity: .65; }
 }
 
+/* Pause animations for users with battery saver or accessibility settings enabled */
+@media (prefers-reduced-motion: reduce) {
+  .bg-layer, .bg-pulse {
+    animation: none;
+  }
+}
 /* OPTIMIZED CONTAINER FOR ULTRA-SMOOTH SCROLLING */
 .container{
     width:100%;
     max-width:850px;
     background: rgba(15, 23, 42, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius:60px;
+    border-radius:100px;
     padding:45px 30px;
     text-align:center;
     box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 30px rgba(13,110,253,.15);
@@ -96,15 +113,15 @@ body{
 
 h1{
     color:#fff;
-    font-size:3rem;
-    margin-bottom:8px; 
+    font-size: 3rem;
+    margin-bottom:25px; 
     letter-spacing: 1px;
 }
 
 .welcome{
     color:#c8c8c8;
-    font-size:1.5rem;
-    margin-bottom:12px;
+    font-size:2rem;
+    margin-bottom:20px;
     font-weight: 400;
 }
 
@@ -112,7 +129,7 @@ h1{
     color: #c8c8c8;
     line-height:1.7;
     margin-bottom:32px;
-    font-size: 1.15rem;
+    font-size: 1.5rem;
     font-weight: 400;
     padding: 13px;
     text-align: center;
@@ -361,6 +378,7 @@ h1{
     position: absolute;
     top: calc(20px + env(safe-area-inset-top));
     right: 5%;
+    opacity: 0.9;
 }
 
 .control-btn {
@@ -412,7 +430,7 @@ h1{
 
     .welcome {
         font-size: 1.25rem;
-        margin-bottom: 30px;
+        margin-bottom: 15px;
     }
 
     .intro {
@@ -422,7 +440,7 @@ h1{
     }
 
     .section-divider {
-        margin-top: 45px;
+        margin-top: 60px;
         margin-bottom: 24px;
         font-size: 0.95rem;
     }
