@@ -27,7 +27,7 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:40px 24px;
+    padding:80px 24px;
     overflow-x:hidden;
     position:relative;
     background:#050816;
@@ -340,12 +340,19 @@ h1{
 
 .lightbox-controls {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row; /* Changed from column to row */
+    gap: 16px;
     z-index: 10;
+}
+
+#closeButton {
+    position: absolute;
+    top: 20px;
+    right: 5%;
 }
 
 .control-btn {
@@ -383,7 +390,7 @@ h1{
 
 @media(max-width:650px){
     body { 
-        padding: 28px 16px;
+        padding: 40px 16px;
     }
     .container{ 
         padding: 32px 18px; 
@@ -493,11 +500,11 @@ h1{
         <img id="lightboxImg" src="" alt="Full Devotional Image">
         
         <div class="lightbox-controls">
-            <button class="control-btn" onclick="closeLightbox(event)" title="Close">&times;</button>
-            <button class="control-btn" onclick="uiZoomIn(event)" title="Zoom In">+</button>
             <button class="control-btn" onclick="uiZoomOut(event)" title="Zoom Out">-</button>
+            <button class="control-btn" onclick="uiZoomIn(event)" title="Zoom In">+</button>
             <button class="control-btn" onclick="resetZoomAnimated(event)" title="Reset Zoom">&#8634;</button>
         </div>
+        <button id="closeButton" class="control-btn" onclick="closeLightbox(event)" title="Close">&times;</button>
     </div>
 </div>
 
