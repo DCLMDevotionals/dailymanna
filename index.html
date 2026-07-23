@@ -85,7 +85,6 @@ body{
     z-index: 1;
 }
 
-/* Enable hardware blur support selectively without scrolling lag */
 @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
     .container {
         background: rgba(15, 23, 42, 0.80);
@@ -259,9 +258,7 @@ h1{
     margin-top: 8px;
 }
 
-/* ========================================= */
-/* LIGHTBOX OVERLAY                          */
-/* ========================================= */
+/* LIGHTBOX OVERLAY */
 .lightbox {
     position: fixed;
     top: 0;
@@ -338,7 +335,7 @@ h1{
 }
 
 #lightboxImg.animate-transform {
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .lightbox-controls {
@@ -424,7 +421,6 @@ h1{
 </head>
 <body>
 
-<!-- INDEPENDENT UNINTERRUPTED BACKGROUND LAYERS -->
 <div class="bg-layer"></div>
 <div class="bg-pulse"></div>
 
@@ -510,6 +506,7 @@ h1{
 const MIN_SCALE = 1;
 const MAX_SCALE = 15;
 const DOUBLE_TAP_SCALE = 2.8;
+const ARROW_PAN_STEP = 60; // Pixels to pan on key press
 
 let scale = 1;
 let translateX = 0;
@@ -532,7 +529,6 @@ const img = document.getElementById('lightboxImg');
 const spinner = document.getElementById('lightboxSpinner');
 const viewport = document.getElementById('lightboxViewport');
 
-// Modern Lightbox Opener with History Navigation
 function openLightbox(imgSrc) {
     spinner.style.display = 'block';
     img.classList.remove('loaded');
@@ -550,12 +546,12 @@ function openLightbox(imgSrc) {
     scale = targetScale = 1;
     translateX = targetTranslateX = 0;
     translateY = targetTranslateY = 0;
-    updateTransform(false);
+    applyTransform(false);
 
     img.onload = () => {
         spinner.style.display = 'none';
         img.classList.add('loaded');
-        clampAndApplyTransform(false);
+        applyTransform(false);
     };
 }
 
@@ -585,35 +581,31 @@ viewport.addEventListener('click', (e) => {
     }
 });
 
-// Clamp Transforms to Viewport Boundaries
-function clampAndApplyTransform(animate = false) {
+// Calculate Max Allowed Boundaries for Given Scale
+function getClampedTranslation(x, y, currentScale) {
+    if (currentScale <= 1.001) {
+        return { x: 0, y: 0 };
+    }
     const vRect = viewport.getBoundingClientRect();
     const naturalWidth = img.offsetWidth || (vRect.width * 0.98);
     const naturalHeight = img.offsetHeight || (vRect.height * 0.98);
 
-    const displayW = naturalWidth * scale;
-    const displayH = naturalHeight * scale;
+    const displayW = naturalWidth * currentScale;
+    const displayH = naturalHeight * currentScale;
 
-    let maxX = Math.max(0, (displayW - vRect.width) / 2);
-    let maxY = Math.max(0, (displayH - vRect.height) / 2);
+    const maxX = Math.max(0, (displayW - vRect.width) / 2);
+    const maxY = Math.max(0, (displayH - vRect.height) / 2);
 
-    if (scale <= 1.001) {
-        translateX = targetTranslateX = 0;
-        translateY = targetTranslateY = 0;
-    } else {
-        translateX = Math.min(Math.max(translateX, -maxX), maxX);
-        translateY = Math.min(Math.max(translateY, -maxY), maxY);
-        targetTranslateX = translateX;
-        targetTranslateY = translateY;
-    }
-
-    updateTransform(animate);
+    return {
+        x: Math.min(Math.max(x, -maxX), maxX),
+        y: Math.min(Math.max(y, -maxY), maxY)
+    };
 }
 
-function updateTransform(animate = false) {
+function applyTransform(animate = false) {
     if (animate) {
         img.classList.add('animate-transform');
-        setTimeout(() => img.classList.remove('animate-transform'), 280);
+        setTimeout(() => img.classList.remove('animate-transform'), 250);
     }
 
     img.style.transform = `translate3d(${translateX}px, ${translateY}px, 0px) scale(${scale})`;
@@ -625,27 +617,33 @@ function updateTransform(animate = false) {
     }
 }
 
-// Smooth Focal Zoom Engine with Smooth Wheel Interpolation
-function zoomAtPoint(newScale, focalX, focalY, animate = false) {
-    const nextScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
-    if (nextScale === scale) return;
+// Seamless Focal Zoom Engine (Pinpoint Pivot Accuracy)
+function zoomToPivot(nextScale, pivotX, pivotY, animate = false) {
+    const clampedScale = Math.min(Math.max(nextScale, MIN_SCALE), MAX_SCALE);
+    if (clampedScale === scale) return;
 
     const vRect = viewport.getBoundingClientRect();
     const viewCenterX = vRect.width / 2;
     const viewCenterY = vRect.height / 2;
 
-    const offsetX = focalX - (viewCenterX + translateX);
-    const offsetY = focalY - (viewCenterY + translateY);
+    const mouseXFromCenter = pivotX - viewCenterX;
+    const mouseYFromCenter = pivotY - viewCenterY;
 
-    const scaleFactor = nextScale / scale;
-    translateX -= offsetX * (scaleFactor - 1);
-    translateY -= offsetY * (scaleFactor - 1);
+    // Direct focal math anchored around pivot
+    const scaleFactor = clampedScale / scale;
+    const rawX = mouseXFromCenter - (mouseXFromCenter - translateX) * scaleFactor;
+    const rawY = mouseYFromCenter - (mouseYFromCenter - translateY) * scaleFactor;
 
-    scale = nextScale;
-    clampAndApplyTransform(animate);
+    const clamped = getClampedTranslation(rawX, rawY, clampedScale);
+
+    scale = targetScale = clampedScale;
+    translateX = targetTranslateX = clamped.x;
+    translateY = targetTranslateY = clamped.y;
+
+    applyTransform(animate);
 }
 
-// Fluid PC Mouse Wheel Zoom Interpolation Loop
+// Smooth Mouse Wheel Interpolation Loop
 function smoothWheelLoop() {
     if (!isAnimatingZoom) return;
 
@@ -657,7 +655,7 @@ function smoothWheelLoop() {
         scale = targetScale;
         translateX = targetTranslateX;
         translateY = targetTranslateY;
-        clampAndApplyTransform(false);
+        applyTransform(false);
         isAnimatingZoom = false;
         return;
     }
@@ -665,27 +663,32 @@ function smoothWheelLoop() {
     scale += scaleDiff * 0.25;
     translateX += xDiff * 0.25;
     translateY += yDiff * 0.25;
-    clampAndApplyTransform(false);
+    applyTransform(false);
 
     requestAnimationFrame(smoothWheelLoop);
 }
 
 viewport.addEventListener('wheel', (e) => {
     e.preventDefault();
-    const zoomFactor = e.deltaY < 0 ? 1.18 : 1 / 1.18;
-    const newTargetScale = Math.min(Math.max(scale * zoomFactor, MIN_SCALE), MAX_SCALE);
+    const zoomFactor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
+    const newScale = Math.min(Math.max(scale * zoomFactor, MIN_SCALE), MAX_SCALE);
 
     const vRect = viewport.getBoundingClientRect();
     const viewCenterX = vRect.width / 2;
     const viewCenterY = vRect.height / 2;
 
-    const offsetX = e.clientX - (viewCenterX + translateX);
-    const offsetY = e.clientY - (viewCenterY + translateY);
+    const mouseXFromCenter = e.clientX - viewCenterX;
+    const mouseYFromCenter = e.clientY - viewCenterY;
 
-    const scaleFactor = newTargetScale / scale;
-    targetTranslateX = translateX - offsetX * (scaleFactor - 1);
-    targetTranslateY = translateY - offsetY * (scaleFactor - 1);
-    targetScale = newTargetScale;
+    const scaleFactor = newScale / scale;
+    const rawX = mouseXFromCenter - (mouseXFromCenter - translateX) * scaleFactor;
+    const rawY = mouseYFromCenter - (mouseYFromCenter - translateY) * scaleFactor;
+
+    const clamped = getClampedTranslation(rawX, rawY, newScale);
+
+    targetScale = newScale;
+    targetTranslateX = clamped.x;
+    targetTranslateY = clamped.y;
 
     if (!isAnimatingZoom) {
         isAnimatingZoom = true;
@@ -722,11 +725,10 @@ img.addEventListener('pointermove', (e) => {
         activePointers[idx] = { id: e.pointerId, x: e.clientX, y: e.clientY };
 
         if (isDragging && scale > 1.001) {
-            translateX += deltaX;
-            translateY += deltaY;
-            targetTranslateX = translateX;
-            targetTranslateY = translateY;
-            clampAndApplyTransform(false);
+            const clamped = getClampedTranslation(translateX + deltaX, translateY + deltaY, scale);
+            translateX = targetTranslateX = clamped.x;
+            translateY = targetTranslateY = clamped.y;
+            applyTransform(false);
         } else if (activePointers.length === 2) {
             const p1 = activePointers[0];
             const p2 = activePointers[1];
@@ -736,7 +738,7 @@ img.addEventListener('pointermove', (e) => {
 
             if (initialPinchDistance > 0) {
                 const calculatedScale = initialPinchScale * (currDist / initialPinchDistance);
-                zoomAtPoint(calculatedScale, midX, midY, false);
+                zoomToPivot(calculatedScale, midX, midY, false);
             }
         }
     }
@@ -768,7 +770,7 @@ img.addEventListener('click', (e) => {
         if (scale > 1.1) {
             resetZoomAnimated();
         } else {
-            zoomAtPoint(DOUBLE_TAP_SCALE, e.clientX, e.clientY, true);
+            zoomToPivot(DOUBLE_TAP_SCALE, e.clientX, e.clientY, true);
         }
         lastTapTime = 0;
     } else {
@@ -776,17 +778,17 @@ img.addEventListener('click', (e) => {
     }
 });
 
-// Controls Handlers
+// UI Control Handlers
 function uiZoomIn(e) {
     if (e) e.stopPropagation();
     const vRect = viewport.getBoundingClientRect();
-    zoomAtPoint(scale * 1.4, vRect.width / 2, vRect.height / 2, true);
+    zoomToPivot(scale * 1.4, vRect.width / 2, vRect.height / 2, true);
 }
 
 function uiZoomOut(e) {
     if (e) e.stopPropagation();
     const vRect = viewport.getBoundingClientRect();
-    zoomAtPoint(scale / 1.4, vRect.width / 2, vRect.height / 2, true);
+    zoomToPivot(scale / 1.4, vRect.width / 2, vRect.height / 2, true);
 }
 
 function resetZoomAnimated(e) {
@@ -794,11 +796,52 @@ function resetZoomAnimated(e) {
     scale = targetScale = 1;
     translateX = targetTranslateX = 0;
     translateY = targetTranslateY = 0;
-    clampAndApplyTransform(true);
+    applyTransform(true);
 }
 
+// Keyboard Shortcuts: Arrow Key Panning, Escape to Close, and +/- for Zoom
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeLightbox();
+    if (!lightboxIsOpen) return;
+
+    // 1. Close lightbox on Escape
+    if (e.key === 'Escape') {
+        closeLightbox();
+        return;
+    }
+
+    // 2. Zoom In (+ or = key) and Zoom Out (- or _ key)
+    if (e.key === '+' || e.key === '=' || e.key === 'NumpadAdd') {
+        e.preventDefault();
+        const vRect = viewport.getBoundingClientRect();
+        zoomToPivot(scale * 1.3, vRect.width / 2, vRect.height / 2, true);
+        return;
+    }
+
+    if (e.key === '-' || e.key === '_' || e.key === 'NumpadSubtract') {
+        e.preventDefault();
+        const vRect = viewport.getBoundingClientRect();
+        zoomToPivot(scale / 1.3, vRect.width / 2, vRect.height / 2, true);
+        return;
+    }
+
+    // 3. Arrow Keys Panning (when zoomed in)
+    if (scale > 1.001) {
+        let deltaX = 0;
+        let deltaY = 0;
+
+        if (e.key === 'ArrowUp') deltaY = ARROW_PAN_STEP;
+        else if (e.key === 'ArrowDown') deltaY = -ARROW_PAN_STEP;
+        else if (e.key === 'ArrowLeft') deltaX = ARROW_PAN_STEP;
+        else if (e.key === 'ArrowRight') deltaX = -ARROW_PAN_STEP;
+
+        if (deltaX !== 0 || deltaY !== 0) {
+            e.preventDefault();
+            const clamped = getClampedTranslation(translateX + deltaX, translateY + deltaY, scale);
+            translateX = targetTranslateX = clamped.x;
+            translateY = targetTranslateY = clamped.y;
+            applyTransform(true);
+        }
+    }
 });
 </script>
 
