@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DCLM Devotional</title>
 
 <!-- SEO & Social Sharing Meta Tags -->
@@ -11,6 +11,7 @@
 <meta property="og:description" content="Daily Manna, Higher Everyday, and Sincere Milk devotional guides.">
 <meta property="og:type" content="website">
 
+<!-- Analytics -->
 <script defer src="https://cloud.umami.is/script.js" data-website-id="2b4cb0ed-62d5-411a-9125-663081e8a936"></script>
 
 <style>
@@ -50,21 +51,11 @@ body::before{
 }
 
 @keyframes gradientMove{
-    0%{
-        background-position:0% 50%;
-        transform:scale(1);
-    }
-    50%{
-        background-position:100% 50%;
-        transform:scale(1.08);
-    }
-    100%{
-        background-position:0% 100%;
-        transform:scale(1);
-    }
+    0%{ background-position:0% 50%; transform:scale(1); }
+    50%{ background-position:100% 50%; transform:scale(1.08); }
+    100%{ background-position:0% 100%; transform:scale(1); }
 }
 
-/* Soft Glow Overlay */
 body::after{
     content:"";
     position:fixed;
@@ -79,10 +70,20 @@ body::after{
     50%{ opacity:.75; }
 }
 
-/* Card Container */
+/* Pause background effects when lightbox is open */
+body.lightbox-open::before,
+body.lightbox-open::after {
+    animation: none !important;
+}
+
+body.lightbox-open .container {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
 .container{
     width:100%;
-    max-width:700px;
+    max-width:850px;
     background:rgba(15,23,42,.78);
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
@@ -90,34 +91,31 @@ body::after{
     border-radius:24px;
     padding:45px 30px;
     text-align:center;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.45),
-        0 0 30px rgba(13,110,253,.15);
+    box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 30px rgba(13,110,253,.15);
 }
 
 h1{
     color:#fff;
-    font-size:3rem;
+    font-size:2.8rem;
     margin-bottom:18px; 
     letter-spacing: 1px;
 }
 
 .welcome{
     color:#c8c8c8;
-    font-size:1.5rem;
-    margin-bottom:15px;
+    font-size:1.4rem;
+    margin-bottom:12px;
     font-weight: bold;
 }
 
 .intro{
     color: #c8c8c8;
-    line-height:1.8;
-    margin-bottom:35px;
-    font-size: 1.2rem;
+    line-height:1.7;
+    margin-bottom:32px;
+    font-size: 1.15rem;
     font-weight: 500;
 }
 
-/* Primary Buttons */
 .buttons{
     display:flex;
     flex-direction:column;
@@ -140,7 +138,6 @@ h1{
     border:1px solid rgba(255,255,255,.08);
 }
 
-/* SVG Icon Styling */
 .btn svg {
     width: 22px;
     height: 22px;
@@ -153,12 +150,6 @@ h1{
     filter:brightness(1.08);
 }
 
-.btn:focus-visible {
-    outline: 2px solid #38bdf8;
-    outline-offset: 3px;
-}
-
-/* Devotional Buttons — Smooth 5-Stop Gradient Transitions */
 .manna {
     background: linear-gradient(135deg, #34d399 0%, #059669 30%, #047857 50%, #059669 70%, #4ade80 100%);
     box-shadow: 0 6px 0px rgba(16, 185, 129, 0.3);
@@ -174,31 +165,29 @@ h1{
     box-shadow: 0 6px 0px rgba(245, 158, 11, 0.3);
 }
 
-/* Social Section Divider */
-.social-divider {
+.section-divider {
     display: flex;
     align-items: center;
     text-align: center;
     color: #94a3b8;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-top: 50px;
-    margin-bottom: 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 40px;
+    margin-bottom: 24px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
 }
 
-.social-divider::before,
-.social-divider::after {
+.section-divider::before,
+.section-divider::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.social-divider:not(:empty)::before { margin-right: .8em; }
+.section-divider:not(:empty)::before { margin-right: .8em; }
 .social-divider:not(:empty)::after { margin-left: .8em; }
 
-/* Social Buttons Grid Layout */
 .social-buttons {
     display: flex;
     gap: 12px;
@@ -212,7 +201,6 @@ h1{
     padding: 14px 10px;
 }
 
-/* Social Buttons — Smooth Gradients */
 .whatsapp {
     background: linear-gradient(135deg, #34d399 0%, #059669 30%, #047857 50%, #059669 70%, #4ade80 100%);
     box-shadow: 0 6px 0px rgba(16, 185, 129, 0.3);
@@ -228,78 +216,180 @@ h1{
     box-shadow: 0 6px 0px rgba(225, 48, 108, 0.3);
 }
 
+.today-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.today-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+}
+
+.today-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.today-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    object-fit: cover;
+}
+
+.today-card span {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+/* ========================================= */
+/* MODERN LIGHTBOX & IMAGE VIEWER           */
+/* ========================================= */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    background: rgba(0, 0, 0, 0.96);
+    touch-action: none;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Loading Spinner */
+.lightbox-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
+    border: 4px solid rgba(255, 255, 255, 0.15);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    z-index: 5;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.lightbox-viewport {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#lightboxImg {
+    position: absolute;
+    max-width: 98vw;
+    max-height: 98vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+    will-change: transform;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    cursor: default;
+}
+
+#lightboxImg.loaded {
+    opacity: 1;
+}
+
+#lightboxImg.can-pan {
+    cursor: grab;
+}
+
+#lightboxImg.is-panning {
+    cursor: grabbing;
+}
+
+/* Smooth Animating Utility */
+#lightboxImg.animate-transform {
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.lightbox-controls {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+}
+
+.control-btn {
+    width: 42px;
+    height: 42px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: background 0.2s, transform 0.1s;
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.control-btn:active {
+    transform: scale(0.92);
+}
+
 .footer{
-    margin-top:35px;
+    margin-top:40px;
     color:#94a3b8;
     font-size:.95rem;
 }
 
-/* Mobile Responsiveness Improvements */
-@media(max-width:600px){
-    body {
-        padding: 12px 10px;
-        /* align-items: flex-start; */
-    }
-
-    .container{
-        padding:24px 18px;
-        border-radius:18px;
-    }
-
-    h1{
-        font-size:1.75rem;
-        margin-bottom:12px;
-    }
-
-    .welcome{
-        font-size:1.05rem;
-        margin-bottom:10px;
-    }
-
-    .intro{
-        font-size:0.95rem;
-        line-height:1.6;
-        margin-bottom:24px;
-    }
-
-    .buttons {
-        gap: 12px;
-        margin-bottom: 24px;
-    }
-
-    .btn{
-        font-size:1.05rem;
-        padding:14px 16px;
-        border-radius:12px;
-    }
-
-    .social-divider {
-        margin-top: 30px;
-        margin-bottom: 16px;
-        font-size: 0.85rem;
-    }
-
-    .social-buttons {
-        display: flex;
-        flex-direction: row;
-        gap: 8px;
-    }
-
-    .social-buttons .btn {
-        flex: 1;
-        font-size: 0.85rem;
-        padding: 10px 6px;
-        gap: 6px;
-    }
-
-    .social-buttons .btn svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    body::before {
-        filter: blur(15px);
-    }
+@media(max-width:650px){
+    body { padding: 12px 10px; }
+    .container{ padding:24px 16px; }
+    h1{ font-size:1.8rem; }
+    .today-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .today-card { padding: 6px; }
+    .today-card span { font-size: 0.75rem; }
+    .lightbox-controls { top: 10px; right: 10px; gap: 8px; }
+    .control-btn { width: 38px; height: 38px; font-size: 1.1rem; }
 }
 </style>
 </head>
@@ -309,83 +399,316 @@ h1{
 
     <h1>DCLM DEVOTIONALS</h1>
 
-    <p class="welcome">
-        Welcome to DCLM Devotionals page 🙏
-    </p>
+    <p class="welcome">Welcome to DCLM Devotionals page 📖</p>
 
-    <p class="intro">
-        Access the Deeper Christian Life Ministry devotional guides for adults, youth, and children below:
-    </p>
+    <p class="intro">Access the Deeper Christian Life Ministry devotional guides for adults, youth, and children below:</p>
 
     <div class="buttons">
-        <a class="btn manna"
-           href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/DailyManna.pdf"
-           target="_blank"
-           rel="noopener noreferrer">
+        <a class="btn manna" href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/DailyManna.pdf" target="_blank" rel="noopener noreferrer">
             <span>📖</span> Daily Manna
         </a>
-        
-        <a class="btn higher"
-           href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/HigherEveryday.pdf"
-           target="_blank"
-           rel="noopener noreferrer">
-            <span>🌅</span> Higher Everyday
+        <a class="btn higher" href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/HigherEveryday.pdf" target="_blank" rel="noopener noreferrer">
+            <span>🎓</span> Higher Everyday
         </a>
-        
-        <a class="btn milk"
-           href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/SincereMilk.pdf"
-           target="_blank"
-           rel="noopener noreferrer">
+        <a class="btn milk" href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/SincereMilk.pdf" target="_blank" rel="noopener noreferrer">
             <span>🍼</span> Sincere Milk
         </a>
     </div>
 
-    <!-- Social Section -->
-    <div class="social-divider">Connect With Us</div>
+    <!-- TODAY'S DEVOTIONALS -->
+    <div class="section-divider">Today's Devotionals</div>
+
+    <div class="today-row">
+        <div class="today-card" onclick="openLightbox('./today/1.webp')">
+            <img src="./today/1.webp" alt="Today's Daily Manna" loading="lazy">
+            <span>Daily Manna</span>
+        </div>
+        <div class="today-card" onclick="openLightbox('./today/2.webp')">
+            <img src="./today/2.webp" alt="Today's Higher Everyday" loading="lazy">
+            <span>Higher Everyday</span>
+        </div>
+        <div class="today-card" onclick="openLightbox('./today/3.webp')">
+            <img src="./today/3.webp" alt="Today's Sincere Milk" loading="lazy">
+            <span>Sincere Milk</span>
+        </div>
+    </div>
+
+    <!-- CONNECT WITH US -->
+    <div class="section-divider">Connect With Us</div>
     
     <div class="social-buttons">
-        <a class="btn whatsapp"
-           href="https://whatsapp.com/channel/0029VbDERHM0LKZ79eZbN20J"
-           target="_blank"
-           rel="noopener noreferrer"
-           aria-label="WhatsApp Channel">
-            <!-- WhatsApp Vector Icon -->
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M12.011 1.003c-6.062 0-10.976 4.914-10.976 10.976 0 1.937.503 3.826 1.46 5.485l-1.55 5.666 5.801-1.522c1.605.877 3.415 1.347 5.265 1.347 6.063 0 10.976-4.914 10.976-10.976 0-6.062-4.913-10.976-10.976-10.976zm0 20.082c-1.687 0-3.342-.453-4.79-1.312l-.343-.204-3.559.933.949-3.468-.224-.356c-.943-1.503-1.442-3.238-1.442-5.018 0-5.021 4.085-9.106 9.106-9.106 5.022 0 9.107 4.085 9.107 9.106 0 5.022-4.085 9.107-9.104 9.107zm5.002-6.837c-.274-.137-1.623-.801-1.874-.892-.252-.093-.435-.137-.618.137-.183.273-.709.892-.869 1.074-.16.183-.32.205-.594.069-.274-.137-1.159-.427-2.208-1.362-.816-.728-1.368-1.627-1.528-1.901-.16-.274-.017-.422.12-.558.123-.123.274-.32.411-.479.137-.16.183-.274.274-.457.091-.183.046-.343-.023-.479-.069-.137-.618-1.484-.847-2.032-.223-.533-.45-.461-.618-.47-.16-.008-.343-.01-.525-.01-.183 0-.479.069-.731.343-.252.274-.96.938-.96 2.289 0 1.351.983 2.653 1.12 2.836.137.183 1.936 2.956 4.69 4.145.655.283 1.167.452 1.566.579.658.209 1.257.179 1.73.109.527-.079 1.623-.663 1.852-1.301.228-.639.228-1.187.16-1.301-.068-.114-.251-.183-.525-.32z"/>
-            </svg>
+        <a class="btn whatsapp" href="https://whatsapp.com/channel/0029VbDERHM0LKZ79eZbN20J" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12.011 1.003c-6.062 0-10.976 4.914-10.976 10.976 0 1.937.503 3.826 1.46 5.485l-1.55 5.666 5.801-1.522c1.605.877 3.415 1.347 5.265 1.347 6.063 0 10.976-4.914 10.976-10.976 0-6.062-4.913-10.976-10.976-10.976zm0 20.082c-1.687 0-3.342-.453-4.79-1.312l-.343-.204-3.559.933.949-3.468-.224-.356c-.943-1.503-1.442-3.238-1.442-5.018 0-5.021 4.085-9.106 9.106-9.106 5.022 0 9.107 4.085 9.107 9.106 0 5.022-4.085 9.107-9.104 9.107zm5.002-6.837c-.274-.137-1.623-.801-1.874-.892-.252-.093-.435-.137-.618.137-.183.273-.709.892-.869 1.074-.16.183-.32.205-.594.069-.274-.137-1.159-.427-2.208-1.362-.816-.728-1.368-1.627-1.528-1.901-.16-.274-.017-.422.12-.558.123-.123.274-.32.411-.479.137-.16.183-.274.274-.457.091-.183.046-.343-.023-.479-.069-.137-.618-1.484-.847-2.032-.223-.533-.45-.461-.618-.47-.16-.008-.343-.01-.525-.01-.183 0-.479.069-.731.343-.252.274-.96.938-.96 2.289 0 1.351.983 2.653 1.12 2.836.137.183 1.936 2.956 4.69 4.145.655.283 1.167.452 1.566.579.658.209 1.257.179 1.73.109.527-.079 1.623-.663 1.852-1.301.228-.639.228-1.187.16-1.301-.068-.114-.251-.183-.525-.32z"/></svg>
             WhatsApp
         </a>
-
-        <a class="btn facebook"
-           href="https://www.facebook.com/profile.php?id=61591868022804" 
-           target="_blank"
-           rel="noopener noreferrer"
-           aria-label="Facebook Channel">
-            <!-- Facebook Vector Icon -->
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
+        <a class="btn facebook" href="https://www.facebook.com/profile.php?id=61591868022804" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             Facebook
         </a>
-
-        <a class="btn instagram"
-           href="https://www.instagram.com/dclm_dailymanna/" 
-           target="_blank"
-           rel="noopener noreferrer"
-           aria-label="Instagram Page">
-            <!-- Instagram Vector Icon -->
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
+        <a class="btn instagram" href="https://www.instagram.com/dclm_dailymanna/" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             Instagram
         </a>
     </div>
 
     <div class="footer">
-        ✨ Growing daily in God's Word.
+        🙏 Growing daily in God's Word.
     </div>
 
 </div>
+
+<!-- LIGHTBOX OVERLAY -->
+<div id="lightbox" class="lightbox">
+    <div id="lightboxSpinner" class="lightbox-spinner"></div>
+    <div class="lightbox-viewport" id="lightboxViewport">
+        <img id="lightboxImg" src="" alt="Full Devotional Image">
+        
+        <div class="lightbox-controls">
+            <button class="control-btn" onclick="closeLightbox(event)" title="Close">&times;</button>
+            <button class="control-btn" onclick="uiZoomIn(event)" title="Zoom In">+</button>
+            <button class="control-btn" onclick="uiZoomOut(event)" title="Zoom Out">-</button>
+            <button class="control-btn" onclick="resetZoomAnimated(event)" title="Reset Zoom">&#8634;</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// State Constants & Configurations
+const MIN_SCALE = 1;
+const MAX_SCALE = 15;
+const DOUBLE_TAP_SCALE = 2.8;
+
+let scale = 1;
+let translateX = 0;
+let translateY = 0;
+
+let isDragging = false;
+let activePointers = [];
+let initialPinchDistance = 0;
+let initialPinchScale = 1;
+let initialPinchCenter = { x: 0, y: 0 };
+let lastTapTime = 0;
+
+const lightbox = document.getElementById('lightbox');
+const img = document.getElementById('lightboxImg');
+const spinner = document.getElementById('lightboxSpinner');
+const viewport = document.getElementById('lightboxViewport');
+
+// Modern Lightbox Opener
+function openLightbox(imgSrc) {
+    spinner.style.display = 'block';
+    img.classList.remove('loaded');
+    img.src = imgSrc;
+
+    lightbox.classList.add('active');
+    document.body.classList.add('lightbox-open');
+    document.body.style.overflow = 'hidden';
+
+    // Reset state instantly before showing image
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    updateTransform(false);
+
+    img.onload = () => {
+        spinner.style.display = 'none';
+        img.classList.add('loaded');
+        clampAndApplyTransform(false);
+    };
+}
+
+function closeLightbox(e) {
+    if (e) e.stopPropagation();
+    lightbox.classList.remove('active');
+    document.body.classList.remove('lightbox-open');
+    document.body.style.overflow = '';
+}
+
+// Background click closes image preview
+viewport.addEventListener('click', (e) => {
+    if (e.target === viewport) {
+        closeLightbox();
+    }
+});
+
+// Clamp Transforms to Viewport Boundaries
+function clampAndApplyTransform(animate = false) {
+    const vRect = viewport.getBoundingClientRect();
+    const naturalWidth = img.offsetWidth || (vRect.width * 0.98);
+    const naturalHeight = img.offsetHeight || (vRect.height * 0.98);
+
+    const displayW = naturalWidth * scale;
+    const displayH = naturalHeight * scale;
+
+    let maxX = Math.max(0, (displayW - vRect.width) / 2);
+    let maxY = Math.max(0, (displayH - vRect.height) / 2);
+
+    if (scale <= 1.001) {
+        translateX = 0;
+        translateY = 0;
+    } else {
+        translateX = Math.min(Math.max(translateX, -maxX), maxX);
+        translateY = Math.min(Math.max(translateY, -maxY), maxY);
+    }
+
+    updateTransform(animate);
+}
+
+function updateTransform(animate = false) {
+    if (animate) {
+        img.classList.add('animate-transform');
+        setTimeout(() => img.classList.remove('animate-transform'), 280);
+    }
+
+    img.style.transform = `translate3d(${translateX}px, ${translateY}px, 0px) scale(${scale})`;
+
+    if (scale > 1.001) {
+        img.classList.add('can-pan');
+    } else {
+        img.classList.remove('can-pan');
+    }
+}
+
+// Smooth Focal Zoom Engine
+function zoomAtPoint(newScale, focalX, focalY, animate = false) {
+    const targetScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
+    if (targetScale === scale) return;
+
+    const vRect = viewport.getBoundingClientRect();
+    const viewCenterX = vRect.width / 2;
+    const viewCenterY = vRect.height / 2;
+
+    // Convert screen coordinates to relative image offset
+    const offsetX = focalX - (viewCenterX + translateX);
+    const offsetY = focalY - (viewCenterY + translateY);
+
+    const scaleFactor = targetScale / scale;
+    translateX -= offsetX * (scaleFactor - 1);
+    translateY -= offsetY * (scaleFactor - 1);
+
+    scale = targetScale;
+    clampAndApplyTransform(animate);
+}
+
+// Wheel Zoom Event Handler
+viewport.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomStep = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+    zoomAtPoint(scale * zoomStep, e.clientX, e.clientY, false);
+}, { passive: false });
+
+// Pointer Management & Dragging
+img.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    img.setPointerCapture(e.pointerId); // Captures pointer drag outside image boundaries
+    activePointers.push({ id: e.pointerId, x: e.clientX, y: e.clientY });
+
+    if (activePointers.length === 1 && scale > 1.001) {
+        isDragging = true;
+        img.classList.add('is-panning');
+    } else if (activePointers.length === 2) {
+        isDragging = false;
+        img.classList.remove('is-panning');
+        
+        // Pinch-to-zoom setup
+        const p1 = activePointers[0];
+        const p2 = activePointers[1];
+        initialPinchDistance = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+        initialPinchScale = scale;
+        initialPinchCenter = {
+            x: (p1.x + p2.x) / 2,
+            y: (p1.y + p2.y) / 2
+        };
+    }
+});
+
+img.addEventListener('pointermove', (e) => {
+    const idx = activePointers.findIndex(p => p.id === e.pointerId);
+    if (idx !== -1) {
+        const prev = activePointers[idx];
+        const deltaX = e.clientX - prev.x;
+        const deltaY = e.clientY - prev.y;
+        activePointers[idx] = { id: e.pointerId, x: e.clientX, y: e.clientY };
+
+        if (isDragging && scale > 1.001) {
+            translateX += deltaX;
+            translateY += deltaY;
+            clampAndApplyTransform(false);
+        } else if (activePointers.length === 2) {
+            const p1 = activePointers[0];
+            const p2 = activePointers[1];
+            const currDist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+
+            if (initialPinchDistance > 0) {
+                const targetScale = initialPinchScale * (currDist / initialPinchDistance);
+                zoomAtPoint(targetScale, midX, midY, false);
+            }
+        }
+    }
+});
+
+function handlePointerUp(e) {
+    if (img.hasPointerCapture(e.pointerId)) {
+        img.releasePointerCapture(e.pointerId);
+    }
+    activePointers = activePointers.filter(p => p.id !== e.pointerId);
+
+    if (activePointers.length < 2) {
+        initialPinchDistance = 0;
+    }
+    if (activePointers.length === 0) {
+        isDragging = false;
+        img.classList.remove('is-panning');
+    }
+}
+
+img.addEventListener('pointerup', handlePointerUp);
+img.addEventListener('pointercancel', handlePointerUp);
+
+// Double-Click / Double-Tap Toggle
+img.addEventListener('click', (e) => {
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
+        e.preventDefault();
+        if (scale > 1.1) {
+            resetZoomAnimated();
+        } else {
+            zoomAtPoint(DOUBLE_TAP_SCALE, e.clientX, e.clientY, true);
+        }
+        lastTapTime = 0;
+    } else {
+        lastTapTime = now;
+    }
+});
+
+// Controls Handlers
+function uiZoomIn(e) {
+    if (e) e.stopPropagation();
+    const vRect = viewport.getBoundingClientRect();
+    zoomAtPoint(scale * 1.4, vRect.width / 2, vRect.height / 2, true);
+}
+
+function uiZoomOut(e) {
+    if (e) e.stopPropagation();
+    const vRect = viewport.getBoundingClientRect();
+    zoomAtPoint(scale / 1.4, vRect.width / 2, vRect.height / 2, true);
+}
+
+function resetZoomAnimated(e) {
+    if (e) e.stopPropagation();
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    clampAndApplyTransform(true);
+}
+
+// Close on Escape Key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+});
+</script>
 
 </body>
 </html>
