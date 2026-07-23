@@ -340,20 +340,23 @@ h1{
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* NAVIGATION CONTROLS - FIXED CENTER BOTTOM */
 .lightbox-controls {
     position: absolute;
-    bottom: 20px;
+    bottom: calc(20px + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 12px;
     z-index: 10;
+    max-width: 95vw;
 }
 
 #closeButton {
     position: absolute;
-    top: 20px;
+    top: calc(20px + env(safe-area-inset-top));
     right: 5%;
 }
 
@@ -374,6 +377,7 @@ h1{
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     transition: background 0.2s, transform 0.1s;
+    flex-shrink: 0;
 }
 
 .control-btn:hover {
@@ -414,6 +418,9 @@ h1{
     }
     .today-card span { 
         font-size: 0.75rem; 
+    }
+    .lightbox-controls {
+        gap: 8px;
     }
     .control-btn { 
         width: 38px; 
@@ -796,7 +803,6 @@ function handlePointerUp(e) {
         const deltaX = e.clientX - touchStartX;
         const deltaY = e.clientY - touchStartY;
 
-        // If swipe distance is > 50px and predominantly horizontal
         if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
             if (deltaX < 0) {
                 nextImage();
