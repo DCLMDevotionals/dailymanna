@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- Fixed viewport meta tag to enable pinch-to-zoom -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DCLM Devotional</title>
 
 <!-- SEO & Social Sharing Meta Tags -->
@@ -267,7 +268,7 @@ h1{
     height: 100vh;
     z-index: 99999;
     background: rgba(0, 0, 0, 0.96);
-    touch-action: none;
+    touch-action: manipulation;
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
@@ -320,6 +321,7 @@ h1{
     opacity: 0;
     transition: opacity 0.2s ease;
     cursor: default;
+    touch-action: none;
 }
 
 #lightboxImg.loaded {
@@ -344,8 +346,8 @@ h1{
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    flex-direction: row; /* Changed from column to row */
-    gap: 16px;
+    flex-direction: row;
+    gap: 12px;
     z-index: 10;
 }
 
@@ -413,11 +415,6 @@ h1{
     .today-card span { 
         font-size: 0.75rem; 
     }
-    .lightbox-controls { 
-        top: 10px; 
-        right: 10px; 
-        gap: 8px; 
-    }
     .control-btn { 
         width: 38px; 
         height: 38px; 
@@ -444,10 +441,10 @@ h1{
             <span>📖</span> Daily Manna
         </a>
         <a class="btn higher" href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/HigherEveryday.pdf" target="_blank" rel="noopener noreferrer">
-            <span>🎓</span> Higher Everyday
+            <span>🦅</span> Higher Everyday
         </a>
         <a class="btn milk" href="https://dclmdevotionals.github.io/dailymanna/web/viewer.html?file=../pdf/SincereMilk.pdf" target="_blank" rel="noopener noreferrer">
-            <span>🍼</span> Sincere Milk
+            <span>🥛</span> Sincere Milk
         </a>
     </div>
 
@@ -488,7 +485,7 @@ h1{
     </div>
 
     <div class="footer">
-        🙏 Growing daily in God's Word.
+        🌱 Growing daily in God's Word.
     </div>
 
 </div>
@@ -500,9 +497,11 @@ h1{
         <img id="lightboxImg" src="" alt="Full Devotional Image">
         
         <div class="lightbox-controls">
+            <button class="control-btn" onclick="previousImage(event)" title="Previous">&#10094;</button>
             <button class="control-btn" onclick="uiZoomOut(event)" title="Zoom Out">-</button>
             <button class="control-btn" onclick="uiZoomIn(event)" title="Zoom In">+</button>
             <button class="control-btn" onclick="resetZoomAnimated(event)" title="Reset Zoom">&#8634;</button>
+            <button class="control-btn" onclick="nextImage(event)" title="Next">&#10095;</button>
         </div>
         <button id="closeButton" class="control-btn" onclick="closeLightbox(event)" title="Close">&times;</button>
     </div>
@@ -513,8 +512,10 @@ h1{
 const MIN_SCALE = 1;
 const MAX_SCALE = 15;
 const DOUBLE_TAP_SCALE = 2.8;
-const ARROW_PAN_STEP = 60; // Pixels to pan on key press
+const ARROW_PAN_STEP = 60;
+const TOTAL_IMAGES = 3;
 
+let currentImage = 1;
 let scale = 1;
 let translateX = 0;
 let translateY = 0;
@@ -531,12 +532,21 @@ let initialPinchScale = 1;
 let lastTapTime = 0;
 let lightboxIsOpen = false;
 
+// Swipe Detection Variables
+let touchStartX = 0;
+let touchStartY = 0;
+
 const lightbox = document.getElementById('lightbox');
 const img = document.getElementById('lightboxImg');
 const spinner = document.getElementById('lightboxSpinner');
 const viewport = document.getElementById('lightboxViewport');
 
 function openLightbox(imgSrc) {
+    const match = imgSrc.match(/(\d+)\.webp$/);
+    if (match) {
+        currentImage = Number(match[1]);
+    }
+
     spinner.style.display = 'block';
     img.classList.remove('loaded');
     img.src = imgSrc;
@@ -560,6 +570,31 @@ function openLightbox(imgSrc) {
         img.classList.add('loaded');
         applyTransform(false);
     };
+}
+
+function showImage(index) {
+    if (index < 1) index = TOTAL_IMAGES;
+    if (index > TOTAL_IMAGES) index = 1;
+
+    currentImage = index;
+    scale = targetScale = 1;
+    translateX = targetTranslateX = 0;
+    translateY = targetTranslateY = 0;
+    applyTransform(false);
+
+    spinner.style.display = "block";
+    img.classList.remove("loaded");
+    img.src = `./today/${currentImage}.webp`;
+}
+
+function previousImage(e) {
+    if (e) e.stopPropagation();
+    showImage(currentImage - 1);
+}
+
+function nextImage(e) {
+    if (e) e.stopPropagation();
+    showImage(currentImage + 1);
 }
 
 function closeLightbox(e, triggerHistoryBack = true) {
@@ -588,7 +623,6 @@ viewport.addEventListener('click', (e) => {
     }
 });
 
-// Calculate Max Allowed Boundaries for Given Scale
 function getClampedTranslation(x, y, currentScale) {
     if (currentScale <= 1.001) {
         return { x: 0, y: 0 };
@@ -624,7 +658,6 @@ function applyTransform(animate = false) {
     }
 }
 
-// Seamless Focal Zoom Engine (Pinpoint Pivot Accuracy)
 function zoomToPivot(nextScale, pivotX, pivotY, animate = false) {
     const clampedScale = Math.min(Math.max(nextScale, MIN_SCALE), MAX_SCALE);
     if (clampedScale === scale) return;
@@ -636,7 +669,6 @@ function zoomToPivot(nextScale, pivotX, pivotY, animate = false) {
     const mouseXFromCenter = pivotX - viewCenterX;
     const mouseYFromCenter = pivotY - viewCenterY;
 
-    // Direct focal math anchored around pivot
     const scaleFactor = clampedScale / scale;
     const rawX = mouseXFromCenter - (mouseXFromCenter - translateX) * scaleFactor;
     const rawY = mouseYFromCenter - (mouseYFromCenter - translateY) * scaleFactor;
@@ -650,7 +682,6 @@ function zoomToPivot(nextScale, pivotX, pivotY, animate = false) {
     applyTransform(animate);
 }
 
-// Smooth Mouse Wheel Interpolation Loop
 function smoothWheelLoop() {
     if (!isAnimatingZoom) return;
 
@@ -703,15 +734,19 @@ viewport.addEventListener('wheel', (e) => {
     }
 }, { passive: false });
 
-// Pointer Management & Dragging
+// Pointer Events & Swipe Handling
 img.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     img.setPointerCapture(e.pointerId);
     activePointers.push({ id: e.pointerId, x: e.clientX, y: e.clientY });
 
-    if (activePointers.length === 1 && scale > 1.001) {
-        isDragging = true;
-        img.classList.add('is-panning');
+    if (activePointers.length === 1) {
+        touchStartX = e.clientX;
+        touchStartY = e.clientY;
+        if (scale > 1.001) {
+            isDragging = true;
+            img.classList.add('is-panning');
+        }
     } else if (activePointers.length === 2) {
         isDragging = false;
         img.classList.remove('is-panning');
@@ -755,6 +790,22 @@ function handlePointerUp(e) {
     if (img.hasPointerCapture(e.pointerId)) {
         img.releasePointerCapture(e.pointerId);
     }
+
+    // Check for horizontal swipe gesture when not zoomed in
+    if (scale <= 1.001 && activePointers.length === 1) {
+        const deltaX = e.clientX - touchStartX;
+        const deltaY = e.clientY - touchStartY;
+
+        // If swipe distance is > 50px and predominantly horizontal
+        if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+            if (deltaX < 0) {
+                nextImage();
+            } else {
+                previousImage();
+            }
+        }
+    }
+
     activePointers = activePointers.filter(p => p.id !== e.pointerId);
 
     if (activePointers.length < 2) {
@@ -806,17 +857,15 @@ function resetZoomAnimated(e) {
     applyTransform(true);
 }
 
-// Keyboard Shortcuts: Arrow Key Panning, Escape to Close, and +/- for Zoom
+// Keyboard Shortcuts
 document.addEventListener('keydown', (e) => {
     if (!lightboxIsOpen) return;
 
-    // 1. Close lightbox on Escape
     if (e.key === 'Escape') {
         closeLightbox();
         return;
     }
 
-    // 2. Zoom In (+ or = key) and Zoom Out (- or _ key)
     if (e.key === '+' || e.key === '=' || e.key === 'NumpadAdd') {
         e.preventDefault();
         const vRect = viewport.getBoundingClientRect();
@@ -831,7 +880,18 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // 3. Arrow Keys Panning (when zoomed in)
+    // Image navigation via Arrow keys when not zoomed in
+    if (e.key === "ArrowLeft" && scale <= 1.001) {
+        previousImage();
+        return;
+    }
+
+    if (e.key === "ArrowRight" && scale <= 1.001) {
+        nextImage();
+        return;
+    }
+
+    // Panning via Arrow keys when zoomed in
     if (scale > 1.001) {
         let deltaX = 0;
         let deltaY = 0;
