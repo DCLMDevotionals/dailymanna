@@ -902,11 +902,19 @@ function resetZoomAnimated(e) {
 }
 
 // Keyboard Shortcuts
+// Keyboard Shortcuts
 document.addEventListener('keydown', (e) => {
     if (!lightboxIsOpen) return;
 
     if (e.key === 'Escape') {
         closeLightbox();
+        return;
+    }
+
+    // Reset zoom with '0' or Numpad '0'
+    if (e.key === '0' || e.key === 'Numpad0') {
+        e.preventDefault();
+        resetZoomAnimated();
         return;
     }
 
@@ -954,6 +962,7 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 </script>
 
 </body>
