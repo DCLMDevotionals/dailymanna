@@ -27,71 +27,71 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:20px;
+    padding:40px 24px;
     overflow-x:hidden;
     position:relative;
     background:#050816;
 }
 
-/* Animated Background */
-body::before{
-    content:"";
-    position:fixed;
-    inset:-30%;
+/* HIGH-PERFORMANCE INDEPENDENT GPU BACKGROUND */
+.bg-layer {
+    position: fixed;
+    inset: -20%;
+    z-index: -2;
+    pointer-events: none;
+    will-change: transform;
+    transform: translateZ(0);
     background:
-        radial-gradient(circle at 20% 20%, rgba(13,110,253,.35), transparent 28%),
-        radial-gradient(circle at 80% 25%, rgba(32,201,151,.30), transparent 30%),
-        radial-gradient(circle at 75% 85%, rgba(111,66,193,.35), transparent 30%),
-        radial-gradient(circle at 20% 80%, rgba(25,135,84,.30), transparent 28%),
+        radial-gradient(circle at 20% 20%, rgba(13,110,253,.35), transparent 35%),
+        radial-gradient(circle at 80% 25%, rgba(32,201,151,.30), transparent 35%),
+        radial-gradient(circle at 75% 85%, rgba(111,66,193,.35), transparent 35%),
+        radial-gradient(circle at 20% 80%, rgba(25,135,84,.30), transparent 35%),
         linear-gradient(135deg,#030712,#0b1224,#111827,#030712);
-    background-size:200% 200%;
-    animation:gradientMove 18s ease-in-out infinite alternate;
-    filter:blur(30px);
-    z-index:-2;
+    animation: smoothBgMove 22s ease-in-out infinite alternate;
 }
 
-@keyframes gradientMove{
-    0%{ background-position:0% 50%; transform:scale(1); }
-    50%{ background-position:100% 50%; transform:scale(1.08); }
-    100%{ background-position:0% 100%; transform:scale(1); }
+@keyframes smoothBgMove {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(-3%, 2%, 0) scale(1.05); }
+    100% { transform: translate3d(2%, -3%, 0) scale(1.02); }
 }
 
-body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-    background:radial-gradient(circle, rgba(255,255,255,.05), transparent 65%);
-    animation:pulse 8s ease-in-out infinite;
-    z-index:-1;
+.bg-pulse {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    will-change: opacity;
+    background: radial-gradient(circle, rgba(255,255,255,.05), transparent 65%);
+    animation: pulseOpacity 8s ease-in-out infinite alternate;
 }
 
-@keyframes pulse{
-    0%,100%{ opacity:.35; }
-    50%{ opacity:.75; }
+@keyframes pulseOpacity {
+    0% { opacity: .25; }
+    100% { opacity: .65; }
 }
 
-/* Pause background effects when lightbox is open */
-body.lightbox-open::before,
-body.lightbox-open::after {
-    animation: none !important;
-}
-
-body.lightbox-open .container {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
+/* OPTIMIZED CONTAINER FOR ULTRA-SMOOTH SCROLLING */
 .container{
     width:100%;
     max-width:850px;
-    background:rgba(15,23,42,.78);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    border:1px solid rgba(255,255,255,.08);
+    background: rgba(15, 23, 42, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius:24px;
     padding:45px 30px;
     text-align:center;
-    box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 30px rgba(13,110,253,.15);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 30px rgba(13,110,253,.15);
+    position: relative;
+    z-index: 1;
+}
+
+/* Enable hardware blur support selectively without scrolling lag */
+@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+    .container {
+        background: rgba(15, 23, 42, 0.80);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
 }
 
 h1{
@@ -120,7 +120,7 @@ h1{
     display:flex;
     flex-direction:column;
     gap:18px;
-    margin-bottom: 35px;
+    margin-bottom: 45px;
 }
 
 .btn{
@@ -134,8 +134,9 @@ h1{
     border-radius:14px;
     font-size:1.3rem;
     font-weight:600;
-    transition:.35s;
+    transition: transform 0.25s ease, filter 0.25s ease;
     border:1px solid rgba(255,255,255,.08);
+    will-change: transform;
 }
 
 .btn svg {
@@ -146,7 +147,7 @@ h1{
 }
 
 .btn:hover{
-    transform:translateY(-4px) scale(1.02);
+    transform:translateY(-3px) scale(1.01);
     filter:brightness(1.08);
 }
 
@@ -172,8 +173,8 @@ h1{
     color: #94a3b8;
     font-size: 1.1rem;
     font-weight: 700;
-    margin-top: 40px;
-    margin-bottom: 24px;
+    margin-top: 55px;
+    margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
 }
@@ -190,9 +191,11 @@ h1{
 
 .social-buttons {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     justify-content: center;
     flex-wrap: wrap;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .social-buttons .btn {
@@ -220,7 +223,8 @@ h1{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .today-card {
@@ -229,8 +233,9 @@ h1{
     border-radius: 14px;
     padding: 10px;
     cursor: pointer;
-    transition: transform 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.25s ease, border-color 0.25s ease;
     overflow: hidden;
+    will-change: transform;
 }
 
 .today-card:hover {
@@ -255,7 +260,7 @@ h1{
 }
 
 /* ========================================= */
-/* MODERN LIGHTBOX & IMAGE VIEWER           */
+/* LIGHTBOX OVERLAY                          */
 /* ========================================= */
 .lightbox {
     position: fixed;
@@ -277,7 +282,6 @@ h1{
     pointer-events: auto;
 }
 
-/* Loading Spinner */
 .lightbox-spinner {
     position: absolute;
     top: 50%;
@@ -333,7 +337,6 @@ h1{
     cursor: grabbing;
 }
 
-/* Smooth Animating Utility */
 #lightboxImg.animate-transform {
     transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
@@ -376,24 +379,54 @@ h1{
 }
 
 .footer{
-    margin-top:40px;
+    margin-top: 50px;
     color:#94a3b8;
     font-size:.95rem;
 }
 
 @media(max-width:650px){
-    body { padding: 12px 10px; }
-    .container{ padding:24px 16px; }
-    h1{ font-size:1.8rem; }
-    .today-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .today-card { padding: 6px; }
-    .today-card span { font-size: 0.75rem; }
-    .lightbox-controls { top: 10px; right: 10px; gap: 8px; }
-    .control-btn { width: 38px; height: 38px; font-size: 1.1rem; }
+    body { 
+        padding: 28px 16px;
+    }
+    .container{ 
+        padding: 32px 18px; 
+    }
+    h1{ 
+        font-size:1.8rem; 
+    }
+    .section-divider {
+        margin-top: 45px;
+        margin-bottom: 24px;
+        font-size: 0.95rem;
+    }
+    .today-row { 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 8px; 
+    }
+    .today-card { 
+        padding: 6px; 
+    }
+    .today-card span { 
+        font-size: 0.75rem; 
+    }
+    .lightbox-controls { 
+        top: 10px; 
+        right: 10px; 
+        gap: 8px; 
+    }
+    .control-btn { 
+        width: 38px; 
+        height: 38px; 
+        font-size: 1.1rem; 
+    }
 }
 </style>
 </head>
 <body>
+
+<!-- INDEPENDENT UNINTERRUPTED BACKGROUND LAYERS -->
+<div class="bg-layer"></div>
+<div class="bg-pulse"></div>
 
 <div class="container">
 
@@ -482,19 +515,24 @@ let scale = 1;
 let translateX = 0;
 let translateY = 0;
 
+let targetScale = 1;
+let targetTranslateX = 0;
+let targetTranslateY = 0;
+let isAnimatingZoom = false;
+
 let isDragging = false;
 let activePointers = [];
 let initialPinchDistance = 0;
 let initialPinchScale = 1;
-let initialPinchCenter = { x: 0, y: 0 };
 let lastTapTime = 0;
+let lightboxIsOpen = false;
 
 const lightbox = document.getElementById('lightbox');
 const img = document.getElementById('lightboxImg');
 const spinner = document.getElementById('lightboxSpinner');
 const viewport = document.getElementById('lightboxViewport');
 
-// Modern Lightbox Opener
+// Modern Lightbox Opener with History Navigation
 function openLightbox(imgSrc) {
     spinner.style.display = 'block';
     img.classList.remove('loaded');
@@ -504,10 +542,14 @@ function openLightbox(imgSrc) {
     document.body.classList.add('lightbox-open');
     document.body.style.overflow = 'hidden';
 
-    // Reset state instantly before showing image
-    scale = 1;
-    translateX = 0;
-    translateY = 0;
+    if (!lightboxIsOpen) {
+        history.pushState({ lightboxOpen: true }, '');
+        lightboxIsOpen = true;
+    }
+
+    scale = targetScale = 1;
+    translateX = targetTranslateX = 0;
+    translateY = targetTranslateY = 0;
     updateTransform(false);
 
     img.onload = () => {
@@ -517,14 +559,26 @@ function openLightbox(imgSrc) {
     };
 }
 
-function closeLightbox(e) {
+function closeLightbox(e, triggerHistoryBack = true) {
     if (e) e.stopPropagation();
+    if (!lightboxIsOpen) return;
+
     lightbox.classList.remove('active');
     document.body.classList.remove('lightbox-open');
     document.body.style.overflow = '';
+    lightboxIsOpen = false;
+
+    if (triggerHistoryBack && history.state && history.state.lightboxOpen) {
+        history.back();
+    }
 }
 
-// Background click closes image preview
+window.addEventListener('popstate', () => {
+    if (lightboxIsOpen) {
+        closeLightbox(null, false);
+    }
+});
+
 viewport.addEventListener('click', (e) => {
     if (e.target === viewport) {
         closeLightbox();
@@ -544,11 +598,13 @@ function clampAndApplyTransform(animate = false) {
     let maxY = Math.max(0, (displayH - vRect.height) / 2);
 
     if (scale <= 1.001) {
-        translateX = 0;
-        translateY = 0;
+        translateX = targetTranslateX = 0;
+        translateY = targetTranslateY = 0;
     } else {
         translateX = Math.min(Math.max(translateX, -maxX), maxX);
         translateY = Math.min(Math.max(translateY, -maxY), maxY);
+        targetTranslateX = translateX;
+        targetTranslateY = translateY;
     }
 
     updateTransform(animate);
@@ -569,38 +625,78 @@ function updateTransform(animate = false) {
     }
 }
 
-// Smooth Focal Zoom Engine
+// Smooth Focal Zoom Engine with Smooth Wheel Interpolation
 function zoomAtPoint(newScale, focalX, focalY, animate = false) {
-    const targetScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
-    if (targetScale === scale) return;
+    const nextScale = Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE);
+    if (nextScale === scale) return;
 
     const vRect = viewport.getBoundingClientRect();
     const viewCenterX = vRect.width / 2;
     const viewCenterY = vRect.height / 2;
 
-    // Convert screen coordinates to relative image offset
     const offsetX = focalX - (viewCenterX + translateX);
     const offsetY = focalY - (viewCenterY + translateY);
 
-    const scaleFactor = targetScale / scale;
+    const scaleFactor = nextScale / scale;
     translateX -= offsetX * (scaleFactor - 1);
     translateY -= offsetY * (scaleFactor - 1);
 
-    scale = targetScale;
+    scale = nextScale;
     clampAndApplyTransform(animate);
 }
 
-// Wheel Zoom Event Handler
+// Fluid PC Mouse Wheel Zoom Interpolation Loop
+function smoothWheelLoop() {
+    if (!isAnimatingZoom) return;
+
+    const scaleDiff = targetScale - scale;
+    const xDiff = targetTranslateX - translateX;
+    const yDiff = targetTranslateY - translateY;
+
+    if (Math.abs(scaleDiff) < 0.001 && Math.abs(xDiff) < 0.1 && Math.abs(yDiff) < 0.1) {
+        scale = targetScale;
+        translateX = targetTranslateX;
+        translateY = targetTranslateY;
+        clampAndApplyTransform(false);
+        isAnimatingZoom = false;
+        return;
+    }
+
+    scale += scaleDiff * 0.25;
+    translateX += xDiff * 0.25;
+    translateY += yDiff * 0.25;
+    clampAndApplyTransform(false);
+
+    requestAnimationFrame(smoothWheelLoop);
+}
+
 viewport.addEventListener('wheel', (e) => {
     e.preventDefault();
-    const zoomStep = e.deltaY < 0 ? 1.15 : 1 / 1.15;
-    zoomAtPoint(scale * zoomStep, e.clientX, e.clientY, false);
+    const zoomFactor = e.deltaY < 0 ? 1.18 : 1 / 1.18;
+    const newTargetScale = Math.min(Math.max(scale * zoomFactor, MIN_SCALE), MAX_SCALE);
+
+    const vRect = viewport.getBoundingClientRect();
+    const viewCenterX = vRect.width / 2;
+    const viewCenterY = vRect.height / 2;
+
+    const offsetX = e.clientX - (viewCenterX + translateX);
+    const offsetY = e.clientY - (viewCenterY + translateY);
+
+    const scaleFactor = newTargetScale / scale;
+    targetTranslateX = translateX - offsetX * (scaleFactor - 1);
+    targetTranslateY = translateY - offsetY * (scaleFactor - 1);
+    targetScale = newTargetScale;
+
+    if (!isAnimatingZoom) {
+        isAnimatingZoom = true;
+        requestAnimationFrame(smoothWheelLoop);
+    }
 }, { passive: false });
 
 // Pointer Management & Dragging
 img.addEventListener('pointerdown', (e) => {
     e.preventDefault();
-    img.setPointerCapture(e.pointerId); // Captures pointer drag outside image boundaries
+    img.setPointerCapture(e.pointerId);
     activePointers.push({ id: e.pointerId, x: e.clientX, y: e.clientY });
 
     if (activePointers.length === 1 && scale > 1.001) {
@@ -610,15 +706,10 @@ img.addEventListener('pointerdown', (e) => {
         isDragging = false;
         img.classList.remove('is-panning');
         
-        // Pinch-to-zoom setup
         const p1 = activePointers[0];
         const p2 = activePointers[1];
         initialPinchDistance = Math.hypot(p2.x - p1.x, p2.y - p1.y);
         initialPinchScale = scale;
-        initialPinchCenter = {
-            x: (p1.x + p2.x) / 2,
-            y: (p1.y + p2.y) / 2
-        };
     }
 });
 
@@ -633,6 +724,8 @@ img.addEventListener('pointermove', (e) => {
         if (isDragging && scale > 1.001) {
             translateX += deltaX;
             translateY += deltaY;
+            targetTranslateX = translateX;
+            targetTranslateY = translateY;
             clampAndApplyTransform(false);
         } else if (activePointers.length === 2) {
             const p1 = activePointers[0];
@@ -642,8 +735,8 @@ img.addEventListener('pointermove', (e) => {
             const midY = (p1.y + p2.y) / 2;
 
             if (initialPinchDistance > 0) {
-                const targetScale = initialPinchScale * (currDist / initialPinchDistance);
-                zoomAtPoint(targetScale, midX, midY, false);
+                const calculatedScale = initialPinchScale * (currDist / initialPinchDistance);
+                zoomAtPoint(calculatedScale, midX, midY, false);
             }
         }
     }
@@ -698,13 +791,12 @@ function uiZoomOut(e) {
 
 function resetZoomAnimated(e) {
     if (e) e.stopPropagation();
-    scale = 1;
-    translateX = 0;
-    translateY = 0;
+    scale = targetScale = 1;
+    translateX = targetTranslateX = 0;
+    translateY = targetTranslateY = 0;
     clampAndApplyTransform(true);
 }
 
-// Close on Escape Key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeLightbox();
 });
