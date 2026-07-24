@@ -498,15 +498,15 @@ h1{
 
     <div class="today-row">
         <div class="today-card" onclick="openLightbox('./today/1.webp')">
-            <img src="./today/1.webp" alt="Today's Daily Manna" loading="lazy">
+            <img class="update-image" src="./today/1.webp" alt="Today's Daily Manna" loading="lazy">
             <span>Daily Manna</span>
         </div>
         <div class="today-card" onclick="openLightbox('./today/2.webp')">
-            <img src="./today/2.webp" alt="Today's Higher Everyday" loading="lazy">
+            <img class="update-image" src="./today/2.webp" alt="Today's Higher Everyday" loading="lazy">
             <span>Higher Everyday</span>
         </div>
         <div class="today-card" onclick="openLightbox('./today/3.webp')">
-            <img src="./today/3.webp" alt="Today's Sincere Milk" loading="lazy">
+            <img class="update-image" src="./today/3.webp" alt="Today's Sincere Milk" loading="lazy">
             <span>Sincere Milk</span>
         </div>
     </div>
@@ -576,6 +576,13 @@ let initialPinchDistance = 0;
 let initialPinchScale = 1;
 let lastTapTime = 0;
 let lightboxIsOpen = false;
+
+//update images with versions, force clear cache
+const today = new Date().toISOString().split("T")[0];
+
+document.querySelectorAll(".update-image").forEach(img => {
+    img.src = `${img.src.split("?")[0]}?v=${today}`;
+});
 
 // Swipe Detection Variables
 let touchStartX = 0;
